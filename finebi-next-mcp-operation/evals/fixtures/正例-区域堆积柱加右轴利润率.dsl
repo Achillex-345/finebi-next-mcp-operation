@@ -1,0 +1,10 @@
+// 2026-10-15 标准产品演示：区域销售额按类别堆叠 + 右轴利润率指标，内置浏览器目视通过
+Chart.from(query.from("订单新老客标记"))
+  .metric("利润率", "SUM([利润])/SUM([销售额])")
+  .x(dim("区域"))
+  .y(bar(sum("销售额")).encode("color", dim("类别")).style("stacked", true).style("cornerRadius", 4))
+  .y(line(metric("利润率")).rightAxis().style("color", "#374151").style("marker", true).encode("label", metric("利润率")).style("labelPosition", LabelPosition.TOP))
+  .numberFormat(metric("利润率"), NumberFormatConfig.percentage(1))
+  .sort(dim("区域"), dependOn(sum("销售额")), SortOrder.DESC)
+  .sort(dim("类别"), "办公用品", "家具", "技术")
+  .build()

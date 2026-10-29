@@ -1,0 +1,11 @@
+// 来源：A-13 首版指标卡：单位后缀写“万”显示“万万”；条件格式挂在指标上报 Not supported yet. Agg
+Chart.from(Query.from("订单新老客标记"))
+    .mark(MarkType.TEXT)
+    .metric("利润率", "SUM([利润])/SUM([销售额])")
+    .encode("text", sum("销售额").as("总销售额"), metric("利润率"))
+    .style("textLayout", TextLayout.PRIMARY_SECONDARY_1_1)
+    .legend(false)
+    .numberFormat(sum("销售额"), NumberFormatConfig.number(1, NumLevel.TEN_THOUSAND, "万"))
+    .numberFormat(metric("利润率"), NumberFormatConfig.percentage(1))
+    .conditionalFormat(metric("利润率"), "[利润率] < 0", "#D03B3B", IconShape.ARROWS_DOWN, "#D03B3B")
+    .build()

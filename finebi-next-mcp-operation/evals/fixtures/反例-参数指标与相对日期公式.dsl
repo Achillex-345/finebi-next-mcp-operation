@@ -1,0 +1,12 @@
+// 398 项目第 3、5 次提交与渠道趋势第 1 次提交的错误写法合集（K-29、K-31、K-32）
+Chart.edit("近十二个月指标对比")
+    .from(Query.from("组织日经营宽表")
+        .groupBy("门店系统编码", dim("日期").date()).agg(sum("合同金额").as("营业额"), sum("客资量").as("客资量"))
+        .label("门店日汇总")
+        .formula("IF([日期] >= RELATIVE_DATE(-11, 'MONTH', 'PERIOD_START'), [营业额], NULL)").as("本期营业额")
+        .label("相对日期写进公式"))
+    .y(bar(sum("本期营业额").as("本期")))
+    .y(line(metric("本期指标")))
+    .metric("本期指标", "IF(@指标切换 = '客资量', SUM([客资量]), SUM([营业额]))")
+    .numberFormat(sum("本期营业额"), new NumberFormatConfig(FormatType.NUMBER, 0, NumLevel.NORMAL, "万元", true))
+    .build()
